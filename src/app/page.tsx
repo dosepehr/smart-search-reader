@@ -1,14 +1,30 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import Input from "@/components/Input";
 import Magnifer from "%/magnifer.svg";
 import { useDebounce } from "@/utils/hooks/useDebounce";
 
 export default function Home() {
-  const [search, setSearch] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [search, setSearch] = useState(searchParams.get("q") || "");
   const debouncedSearch = useDebounce(search, 500);
-  console.log("Debounced:", debouncedSearch);
+
+  // update url whenever debounced value changes
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (debouncedSearch) {
+      params.set("q", debouncedSearch);
+    } else {
+      params.delete("q");
+    }
+
+    router.replace(`?${params.toString()}`);
+  }, [debouncedSearch, router]);
 
   return (
     <div className="font-mono">
@@ -24,114 +40,6 @@ export default function Home() {
         />
         <div className="border border-primary p-4 rounded-lg mt-10">
           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Earum maxime
-          ea quisquam, pariatur deleniti vel, optio eius perferendis, at
-          repellendus odio doloribus saepe eaque ad atque nam ipsam! Aspernatur,
-          maiores? Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          Earum maxime ea quisquam, pariatur deleniti vel, optio eius
-          perferendis, at repellendus odio doloribus saepe eaque ad atque nam
-          ipsam! Aspernatur, maiores? Lorem ipsum dolor sit, amet consectetur
-          adipisicing elit. Earum maxime ea quisquam, pariatur deleniti vel,
-          optio eius perferendis, at repellendus odio doloribus saepe eaque ad
-          atque nam ipsam! Aspernatur, maiores? Lorem ipsum dolor sit, amet
-          consectetur adipisicing elit. Earum maxime ea quisquam, pariatur
-          deleniti vel, optio eius perferendis, at repellendus odio doloribus
-          saepe eaque ad atque nam ipsam! Aspernatur, maiores? Lorem ipsum dolor
-          sit, amet consectetur adipisicing elit. Earum maxime ea quisquam,
-          pariatur deleniti vel, optio eius perferendis, at repellendus odio
-          doloribus saepe eaque ad atque nam ipsam! Aspernatur, maiores? Lorem
-          ipsum dolor sit, amet consectetur adipisicing elit. Earum maxime ea
-          quisquam, pariatur deleniti vel, optio eius perferendis, at
-          repellendus odio doloribus saepe eaque ad atque nam ipsam! Aspernatur,
-          maiores? Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          Earum maxime ea quisquam, pariatur deleniti vel, optio eius
-          perferendis, at repellendus odio doloribus saepe eaque ad atque nam
-          ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet consectetur
-          adipisicing elit. Earum maxime ea quisquam, pariatur deleniti vel,
-          optio eius perferendis, at repellendus odio doloribus saepe eaque ad
-          atque nam ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet
-          consectetur adipisicing elit. Earum maxime ea quisquam, pariatur
-          deleniti vel, optio eius perferendis, at repellendus odio doloribus
-          saepe eaque ad atque nam ipsam! Aspernatur, maiores?Lorem ipsum dolor
-          sit, amet consectetur adipisicing elit. Earum maxime ea quisquam,
-          pariatur deleniti vel, optio eius perferendis, at repellendus odio
-          doloribus saepe eaque ad atque nam ipsam! Aspernatur, maiores?Lorem
-          ipsum dolor sit, amet consectetur adipisicing elit. Earum maxime ea
-          quisquam, pariatur deleniti vel, optio eius perferendis, at
-          repellendus odio doloribus saepe eaque ad atque nam ipsam! Aspernatur,
-          maiores?Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          Earum maxime ea quisquam, pariatur deleniti vel, optio eius
-          perferendis, at repellendus odio doloribus saepe eaque ad atque nam
-          ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet consectetur
-          adipisicing elit. Earum maxime ea quisquam, pariatur deleniti vel,
-          optio eius perferendis, at repellendus odio doloribus saepe eaque ad
-          atque nam ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet
-          consectetur adipisicing elit. Earum maxime ea quisquam, pariatur
-          deleniti vel, optio eius perferendis, at repellendus odio doloribus
-          saepe eaque ad atque nam ipsam! Aspernatur, maiores?Lorem ipsum dolor
-          sit, amet consectetur adipisicing elit. Earum maxime ea quisquam,
-          pariatur deleniti vel, optio eius perferendis, at repellendus odio
-          doloribus saepe eaque ad atque nam ipsam! Aspernatur, maiores?Lorem
-          ipsum dolor sit, amet consectetur adipisicing elit. Earum maxime ea
-          quisquam, pariatur deleniti vel, optio eius perferendis, at
-          repellendus odio doloribus saepe eaque ad atque nam ipsam! Aspernatur,
-          maiores?Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          Earum maxime ea quisquam, pariatur deleniti vel, optio eius
-          perferendis, at repellendus odio doloribus saepe eaque ad atque nam
-          ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet consectetur
-          adipisicing elit. Earum maxime ea quisquam, pariatur deleniti vel,
-          optio eius perferendis, at repellendus odio doloribus saepe eaque ad
-          atque nam ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet
-          consectetur adipisicing elit. Earum maxime ea quisquam, pariatur
-          deleniti vel, optio eius perferendis, at repellendus odio doloribus
-          saepe eaque ad atque nam ipsam! Aspernatur, maiores?Lorem ipsum dolor
-          sit, amet consectetur adipisicing elit. Earum maxime ea quisquam,
-          pariatur deleniti vel, optio eius perferendis, at repellendus odio
-          doloribus saepe eaque ad atque nam ipsam! Aspernatur, maiores?Lorem
-          ipsum dolor sit, amet consectetur adipisicing elit. Earum maxime ea
-          quisquam, pariatur deleniti vel, optio eius perferendis, at
-          repellendus odio doloribus saepe eaque ad atque nam ipsam! Aspernatur,
-          maiores?Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          Earum maxime ea quisquam, pariatur deleniti vel, optio eius
-          perferendis, at repellendus odio doloribus saepe eaque ad atque nam
-          ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet consectetur
-          adipisicing elit. Earum maxime ea quisquam, pariatur deleniti vel,
-          optio eius perferendis, at repellendus odio doloribus saepe eaque ad
-          atque nam ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet
-          consectetur adipisicing elit. Earum maxime ea quisquam, pariatur
-          deleniti vel, optio eius perferendis, at repellendus odio doloribus
-          saepe eaque ad atque nam ipsam! Aspernatur, maiores?Lorem ipsum dolor
-          sit, amet consectetur adipisicing elit. Earum maxime ea quisquam,
-          pariatur deleniti vel, optio eius perferendis, at repellendus odio
-          doloribus saepe eaque ad atque nam ipsam! Aspernatur, maiores?Lorem
-          ipsum dolor sit, amet consectetur adipisicing elit. Earum maxime ea
-          quisquam, pariatur deleniti vel, optio eius perferendis, at
-          repellendus odio doloribus saepe eaque ad atque nam ipsam! Aspernatur,
-          maiores?Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          Earum maxime ea quisquam, pariatur deleniti vel, optio eius
-          perferendis, at repellendus odio doloribus saepe eaque ad atque nam
-          ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet consectetur
-          adipisicing elit. Earum maxime ea quisquam, pariatur deleniti vel,
-          optio eius perferendis, at repellendus odio doloribus saepe eaque ad
-          atque nam ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet
-          consectetur adipisicing elit. Earum maxime ea quisquam, pariatur
-          deleniti vel, optio eius perferendis, at repellendus odio doloribus
-          saepe eaque ad atque nam ipsam! Aspernatur, maiores?Lorem ipsum dolor
-          sit, amet consectetur adipisicing elit. Earum maxime ea quisquam,
-          pariatur deleniti vel, optio eius perferendis, at repellendus odio
-          doloribus saepe eaque ad atque nam ipsam! Aspernatur, maiores?Lorem
-          ipsum dolor sit, amet consectetur adipisicing elit. Earum maxime ea
-          quisquam, pariatur deleniti vel, optio eius perferendis, at
-          repellendus odio doloribus saepe eaque ad atque nam ipsam! Aspernatur,
-          maiores?Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          Earum maxime ea quisquam, pariatur deleniti vel, optio eius
-          perferendis, at repellendus odio doloribus saepe eaque ad atque nam
-          ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet consectetur
-          adipisicing elit. Earum maxime ea quisquam, pariatur deleniti vel,
-          optio eius perferendis, at repellendus odio doloribus saepe eaque ad
-          atque nam ipsam! Aspernatur, maiores?Lorem ipsum dolor sit, amet
-          consectetur adipisicing elit. Earum maxime ea quisquam, pariatur
-          deleniti vel, optio eius perferendis, at repellendus odio doloribus
-          saepe eaque ad atque nam ipsam! Aspernatur, maiores?
         </div>
       </div>
     </div>
