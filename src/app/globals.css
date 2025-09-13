@@ -58,7 +58,6 @@
 }
 
 html {
-  font-family: var(--font-estedad);
   background-color: var(--root-bg);
   scroll-behavior: smooth;
 }
