@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import { Suspense } from 'react';
 import Loading from '@/components/Loading';
 import Copyright from '@/components/Copyright';
+import SWRegister from '@/components/SW';
 
 const geistMono = Geist_Mono({
     variable: '--font-geist-mono',
@@ -35,8 +36,14 @@ export default function RootLayout({
                     name='apple-mobile-web-app-status-bar-style'
                     content='default'
                 />
-                <meta name='apple-mobile-web-app-title' content='Smart Search Reader' />
-                <meta name='description' content='Best Smart Search Reader in the world' />
+                <meta
+                    name='apple-mobile-web-app-title'
+                    content='Smart Search Reader'
+                />
+                <meta
+                    name='description'
+                    content='Best Smart Search Reader in the world'
+                />
                 <meta name='format-detection' content='telephone=no' />
                 <meta name='mobile-web-app-capable' content='yes' />
                 <meta
@@ -112,7 +119,10 @@ export default function RootLayout({
                 <link rel='shortcut icon' href='/favicon.ico' />
 
                 <meta name='twitter:card' content='summary' />
-                <meta name='twitter:url' content='https://smart-search-reader-sable.vercel.app' />
+                <meta
+                    name='twitter:url'
+                    content='https://smart-search-reader-sable.vercel.app'
+                />
                 <meta name='twitter:title' content='Smart Search Reader' />
                 <meta
                     name='twitter:description'
@@ -131,7 +141,10 @@ export default function RootLayout({
                     content='Best Smart Search Reader in the world'
                 />
                 <meta property='og:site_name' content='Smart Search Reader' />
-                <meta property='og:url' content='https://smart-search-reader-sable.vercel.app' />
+                <meta
+                    property='og:url'
+                    content='https://smart-search-reader-sable.vercel.app'
+                />
                 <meta
                     property='og:image'
                     content='https://smart-search-reader-sable.vercel.app/icons/icon-512x512.png'
@@ -141,6 +154,7 @@ export default function RootLayout({
             <body className={`${geistMono.variable} antialiased font-mono`}>
                 <Header />
                 <Copyright />
+                <SWRegister />
                 <Suspense fallback={<Loading />}>{children}</Suspense>
             </body>
         </html>
