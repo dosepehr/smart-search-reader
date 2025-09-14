@@ -33,7 +33,6 @@ export default function Home() {
     router.replace(`?${params.toString()}`);
     setActiveMatchIndex(-1); // reset when search changes
   }, [debouncedSearch, router]);
-
   // get matches for results navigation
   const matches = useMemo(() => {
     if (!debouncedSearch || debouncedSearch.length < 3) return [];
@@ -41,6 +40,31 @@ export default function Home() {
     const regex = new RegExp(safeQuery, "gi");
     return [...text.matchAll(regex)].map((m) => m[0]);
   }, [debouncedSearch]);
+  useEffect(() => {
+    const handleDocumentKeyDown = (e: KeyboardEvent) => {
+      // Navigate search results only if a search is active and matches exist
+      if (matches.length > 0) {
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          setActiveMatchIndex((prev) =>
+            prev < matches.length - 1 ? prev + 1 : 0
+          );
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setActiveMatchIndex((prev) =>
+            prev > 0 ? prev - 1 : matches.length - 1
+          );
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleDocumentKeyDown);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleDocumentKeyDown);
+    };
+  }, [matches, setActiveMatchIndex]);
 
   const highlightText = (content: string, query: string) => {
     if (!query || query.length < 3) return content;
@@ -103,19 +127,6 @@ export default function Home() {
       } else if (e.key === "Enter" && activeIndex >= 0) {
         e.preventDefault();
         handleSuggestionClick(suggestions[activeIndex]);
-      }
-    } else if (matches.length > 0) {
-      // navigating search results
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setActiveMatchIndex((prev) =>
-          prev < matches.length - 1 ? prev + 1 : 0
-        );
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setActiveMatchIndex((prev) =>
-          prev > 0 ? prev - 1 : matches.length - 1
-        );
       }
     }
   };
