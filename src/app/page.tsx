@@ -167,6 +167,7 @@ export default function Home() {
                             setTimeout(() => setIsFocused(false), 200)
                         }
                         onKeyDown={handleKeyDown}
+                        isAnimated
                     />
 
                     {isFocused && suggestions.length > 0 && (

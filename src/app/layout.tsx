@@ -4,6 +4,7 @@ import './globals.css';
 import Header from '@/components/Header';
 import { Suspense } from 'react';
 import Loading from '@/components/Loading';
+import Copyright from '@/components/Copyright';
 
 const geistMono = Geist_Mono({
     variable: '--font-geist-mono',
@@ -139,6 +140,7 @@ export default function RootLayout({
 
             <body className={`${geistMono.variable} antialiased font-mono`}>
                 <Header />
+                <Copyright />
                 <Suspense fallback={<Loading />}>{children}</Suspense>
             </body>
         </html>
