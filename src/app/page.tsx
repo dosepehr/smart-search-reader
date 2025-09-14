@@ -7,6 +7,7 @@ import Magnifer from "%/magnifer.svg";
 import { useDebounce } from "@/utils/hooks/useDebounce";
 import { text } from "@/utils/constants";
 import { escapeRegex } from "@/utils/funcs/regex";
+import Message from "@/components/Message";
 
 export default function Home() {
   const router = useRouter();
@@ -70,17 +71,18 @@ export default function Home() {
             setSearch(e.target.value)
           }
         />
-
-        {debouncedSearch.length >= 3 && (
-          <div className="mt-2 text-sm">
-            {matchCount > 0 ? (
-              <p className="text-success">
-                Found {matchCount} result{matchCount > 1 ? "s" : ""}
-              </p>
+        {debouncedSearch.length > 0 && (
+          <>
+            {debouncedSearch.length < 3 ? (
+              <Message classname="text-info">
+                Type at least 3 characters to start searching
+              </Message>
+            ) : matchCount > 0 ? (
+              <Message classname="text-success">Results : {matchCount}</Message>
             ) : (
-              <p className="text-error">No results found</p>
+              <Message classname="text-error">No results found</Message>
             )}
-          </div>
+          </>
         )}
 
         <div className="border border-primary p-4 rounded-lg mt-6 leading-relaxed">
