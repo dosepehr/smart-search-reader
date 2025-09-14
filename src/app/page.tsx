@@ -15,7 +15,8 @@ export default function Home() {
 
   const [search, setSearch] = useState(searchParams.get("q") || "");
   const [isFocused, setIsFocused] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(-1); // for keyboard navigation
+  const [activeIndex, setActiveIndex] = useState(-1); // suggestions
+  const [activeMatchIndex, setActiveMatchIndex] = useState(-1); // search results
   const debouncedSearch = useDebounce(search, 500);
 
   // update url whenever debounced value changes
@@ -29,7 +30,16 @@ export default function Home() {
     }
 
     router.replace(`?${params.toString()}`);
+    setActiveMatchIndex(-1); // reset when search changes
   }, [debouncedSearch, router]);
+
+  // get matches for results navigation
+  const matches = useMemo(() => {
+    if (!debouncedSearch || debouncedSearch.length < 3) return [];
+    const safeQuery = escapeRegex(debouncedSearch);
+    const regex = new RegExp(safeQuery, "gi");
+    return [...text.matchAll(regex)].map((m) => m[0]);
+  }, [debouncedSearch]);
 
   const highlightText = (content: string, query: string) => {
     if (!query || query.length < 3) return content;
@@ -38,35 +48,38 @@ export default function Home() {
     const regex = new RegExp(`(${safeQuery})`, "gi");
     const parts = content.split(regex);
 
-    return parts.map((part, i) =>
-      regex.test(part) ? (
-        <mark
-          key={`${i}-${debouncedSearch}`}
-          className="highlight-anim bg-secondary text-secondary-content px-1 rounded"
-        >
-          {part}
-        </mark>
-      ) : (
-        part
-      )
-    );
+    let matchCounter = -1;
+
+    return parts.map((part, i) => {
+      if (regex.test(part)) {
+        matchCounter++;
+        const isActive = matchCounter === activeMatchIndex;
+        return (
+          <mark
+            key={`${i}-${debouncedSearch}`}
+            className={`highlight-anim px-1 rounded ${
+              isActive
+                ? "bg-secondary text-secondary-content ring-2 ring-secondary ring-offset-2"
+                : "bg-secondary text-secondary-content"
+            }`}
+          >
+            {part}
+          </mark>
+        );
+      }
+      return part;
+    });
   };
 
   // calculate match count
-  const matchCount = useMemo(() => {
-    if (!debouncedSearch || debouncedSearch.length < 3) return 0;
-
-    const safeQuery = escapeRegex(debouncedSearch);
-    const regex = new RegExp(safeQuery, "gi");
-    return (text.match(regex) || []).length;
-  }, [debouncedSearch]);
+  const matchCount = matches.length;
 
   const suggestions = useMemo(() => {
     if (search.length < 1) return [];
-    const words = Array.from(new Set(text.split(/\W+/))); // unique words
+    const words = Array.from(new Set(text.split(/\W+/)));
     return words
       .filter((w) => w.toLowerCase().includes(search.toLowerCase()))
-      .slice(0, 5); // show max 5
+      .slice(0, 5);
   }, [search]);
 
   const handleSuggestionClick = (word: string) => {
@@ -76,17 +89,35 @@ export default function Home() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!isFocused || suggestions.length === 0) return;
-
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setActiveIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setActiveIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
-    } else if (e.key === "Enter" && activeIndex >= 0) {
-      e.preventDefault();
-      handleSuggestionClick(suggestions[activeIndex]);
+    if (isFocused && suggestions.length > 0) {
+      // navigating suggestions
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveIndex((prev) =>
+          prev < suggestions.length - 1 ? prev + 1 : 0
+        );
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveIndex((prev) =>
+          prev > 0 ? prev - 1 : suggestions.length - 1
+        );
+      } else if (e.key === "Enter" && activeIndex >= 0) {
+        e.preventDefault();
+        handleSuggestionClick(suggestions[activeIndex]);
+      }
+    } else if (matches.length > 0) {
+      // navigating search results
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveMatchIndex((prev) =>
+          prev < matches.length - 1 ? prev + 1 : 0
+        );
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveMatchIndex((prev) =>
+          prev > 0 ? prev - 1 : matches.length - 1
+        );
+      }
     }
   };
 
