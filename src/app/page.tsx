@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import Input from "@/components/Input";
@@ -202,7 +202,7 @@ export default function Home() {
           </div>
         )}
 
-        <div className="border border-primary p-4 rounded-lg mt-6 leading-relaxed">
+        <div className="border border-primary p-4 rounded-lg mt-6 leading-relaxed h-[55vh] min-h-[20rem] overflow-y-scroll">
           {highlightText(text, debouncedSearch)}
         </div>
       </div>
