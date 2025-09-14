@@ -14,6 +14,7 @@ export default function Home() {
   const searchParams = useSearchParams();
 
   const [search, setSearch] = useState(searchParams.get("q") || "");
+  const [isFocused, setIsFocused] = useState(false);
   const debouncedSearch = useDebounce(search, 500);
 
   // update url whenever debounced value changes
@@ -39,7 +40,7 @@ export default function Home() {
     return parts.map((part, i) =>
       regex.test(part) ? (
         <mark
-          key={i}
+          key={`${i}-${debouncedSearch}`} // force re-animate
           className="highlight-anim bg-secondary text-secondary-content px-1 rounded"
         >
           {part}
@@ -59,18 +60,51 @@ export default function Home() {
     return (text.match(regex) || []).length;
   }, [debouncedSearch]);
 
+  const suggestions = useMemo(() => {
+    if (search.length < 1) return [];
+    const words = Array.from(new Set(text.split(/\W+/))); // unique words
+    return words
+      .filter((w) => w.toLowerCase().includes(search.toLowerCase()))
+      .slice(0, 5); // show max 5
+  }, [search]);
+
+  const handleSuggestionClick = (word: string) => {
+    setSearch(word);
+    setIsFocused(false);
+  };
+
   return (
-    <div className="font-mono">
+    <div className="font-mono relative">
       <div className="container py-10 max-w-4xl">
-        <Input
-          icon={<Magnifer />}
-          placeholder="Search..."
-          isAnimated
-          value={search}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setSearch(e.target.value)
-          }
-        />
+        <div className="relative">
+          <Input
+            icon={<Magnifer />}
+            placeholder="Search..."
+            isAnimated
+            value={search}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearch(e.target.value)
+            }
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setTimeout(() => setIsFocused(false), 200)} // delay so click registers
+          />
+
+          {/* suggestions dropdown */}
+          {isFocused && suggestions.length > 0 && (
+            <ul className="absolute left-0 right-0 mt-1 border border-gray-300 bg-white rounded-lg shadow-md z-50">
+              {suggestions.map((s, i) => (
+                <li
+                  key={i}
+                  className="px-3 py-2 cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSuggestionClick(s)}
+                >
+                  {s}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
         {debouncedSearch.length > 0 && (
           <>
             {debouncedSearch.length < 3 ? (
