@@ -27,10 +27,14 @@ export default function Home() {
     router.replace(`?${params.toString()}`);
   }, [debouncedSearch, router]);
 
+  const escapeRegex = (str: string) =>
+    str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
   const highlightText = (content: string, query: string) => {
     if (!query) return content;
 
-    const regex = new RegExp(`(${query})`, "gi");
+    const safeQuery = escapeRegex(query); // escape special chars
+    const regex = new RegExp(`(${safeQuery})`, "gi");
     const parts = content.split(regex);
 
     return parts.map((part, i) =>
