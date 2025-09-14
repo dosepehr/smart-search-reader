@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 import Input from '@/components/Input';
 import { useDebounce } from '@/utils/hooks/useDebounce';
@@ -10,25 +9,13 @@ import Message from '@/components/Message';
 import Button from '@/components/Button';
 
 export default function Home() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-
-    const [search, setSearch] = useState(searchParams.get('q') || '');
+    const [search, setSearch] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
     const [activeMatchIndex, setActiveMatchIndex] = useState(-1);
     const debouncedSearch = useDebounce(search, 500);
 
     const markRefs = useRef<HTMLElement[]>([]);
-
-    // Update URL
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        if (debouncedSearch.length >= 3) params.set('q', debouncedSearch);
-        else params.delete('q');
-        router.replace(`?${params.toString()}`);
-        setActiveMatchIndex(-1);
-    }, [debouncedSearch, router]);
 
     // Compute matches
     const matches = useMemo(() => {
@@ -83,14 +70,13 @@ export default function Home() {
 
         const parts: React.ReactNode[] = [];
         let lastIndex = 0;
-        markRefs.current = []; // reset refs
+        markRefs.current = [];
 
         matches.forEach((match, idx) => {
-            // text before match
             if (match.start > lastIndex) {
                 parts.push(text.slice(lastIndex, match.start));
             }
-            // the match itself
+
             const isActive = idx === activeMatchIndex;
             parts.push(
                 <mark
@@ -111,7 +97,6 @@ export default function Home() {
             lastIndex = match.end;
         });
 
-        // remaining text
         if (lastIndex < text.length) parts.push(text.slice(lastIndex));
 
         return parts;
