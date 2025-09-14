@@ -18,7 +18,6 @@ export default withPWA({
         audio: '/offline',
         video: '/offline',
     },
-    additionalManifestEntries: [{ url: '/images/logo.jpg', revision: null }],
     runtimeCaching: [
         {
             urlPattern: /^\/$/,
