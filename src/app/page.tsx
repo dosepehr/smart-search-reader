@@ -3,7 +3,6 @@ import { useState, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import Input from '@/components/Input';
-import Magnifer from '%/magnifer.svg';
 import { useDebounce } from '@/utils/hooks/useDebounce';
 import { text } from '@/utils/constants';
 import { escapeRegex } from '@/utils/funcs/regex';
@@ -158,7 +157,6 @@ export default function Home() {
             <div className='container py-10 max-w-4xl'>
                 <div className='relative'>
                     <Input
-                        icon={<Magnifer />}
                         placeholder='Search...'
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
