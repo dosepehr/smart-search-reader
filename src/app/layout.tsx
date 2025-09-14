@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
+import { Suspense } from 'react';
+import Loading from '@/components/Loading';
 
 const geistMono = Geist_Mono({
     variable: '--font-geist-mono',
@@ -137,7 +139,7 @@ export default function RootLayout({
 
             <body className={`${geistMono.variable} antialiased font-mono`}>
                 <Header />
-                {children}
+                <Suspense fallback={<Loading />}>{children}</Suspense>
             </body>
         </html>
     );
