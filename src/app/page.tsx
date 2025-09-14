@@ -15,6 +15,7 @@ export default function Home() {
 
   const [search, setSearch] = useState(searchParams.get("q") || "");
   const [isFocused, setIsFocused] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1); // for keyboard navigation
   const debouncedSearch = useDebounce(search, 500);
 
   // update url whenever debounced value changes
@@ -40,7 +41,7 @@ export default function Home() {
     return parts.map((part, i) =>
       regex.test(part) ? (
         <mark
-          key={`${i}-${debouncedSearch}`} // force re-animate
+          key={`${i}-${debouncedSearch}`}
           className="highlight-anim bg-secondary text-secondary-content px-1 rounded"
         >
           {part}
@@ -71,6 +72,22 @@ export default function Home() {
   const handleSuggestionClick = (word: string) => {
     setSearch(word);
     setIsFocused(false);
+    setActiveIndex(-1);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!isFocused || suggestions.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+    } else if (e.key === "Enter" && activeIndex >= 0) {
+      e.preventDefault();
+      handleSuggestionClick(suggestions[activeIndex]);
+    }
   };
 
   return (
@@ -86,7 +103,8 @@ export default function Home() {
               setSearch(e.target.value)
             }
             onFocus={() => setIsFocused(true)}
-            onBlur={() => setTimeout(() => setIsFocused(false), 200)} // delay so click registers
+            onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+            onKeyDown={handleKeyDown}
           />
 
           {/* suggestions dropdown */}
@@ -95,7 +113,9 @@ export default function Home() {
               {suggestions.map((s, i) => (
                 <li
                   key={i}
-                  className="px-3 py-2 cursor-pointer hover:bg-gray-100"
+                  className={`px-3 py-2 cursor-pointer ${
+                    i === activeIndex ? "bg-gray-200" : "hover:bg-gray-100"
+                  }`}
                   onClick={() => handleSuggestionClick(s)}
                 >
                   {s}
