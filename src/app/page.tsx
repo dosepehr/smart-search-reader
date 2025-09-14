@@ -82,8 +82,8 @@ export default function Home() {
         return (
           <mark
             key={`${i}-${debouncedSearch}`}
-            className={`highlight-anim px-1 bg-secondary text-secondary-content rounded ${
-              isActive && " ring-2 ring-secondary ring-offset-2"
+            className={`highlight-anim px-1 text-secondary-content rounded duration-300 ${
+              isActive ? " ring-2 ring-primary ring-offset-2 bg-primary" : "bg-secondary"
             }`}
           >
             {part}
