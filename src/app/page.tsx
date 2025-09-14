@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import Input from "@/components/Input";
@@ -8,6 +8,7 @@ import { useDebounce } from "@/utils/hooks/useDebounce";
 import { text } from "@/utils/constants";
 import { escapeRegex } from "@/utils/funcs/regex";
 import Message from "@/components/Message";
+import Button from "@/components/Button";
 
 export default function Home() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function Home() {
   const [activeMatchIndex, setActiveMatchIndex] = useState(-1); // search results
   const debouncedSearch = useDebounce(search, 500);
 
-  // update url whenever debounced value changes
+  // update URL whenever debounced value changes
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
@@ -57,10 +58,8 @@ export default function Home() {
         return (
           <mark
             key={`${i}-${debouncedSearch}`}
-            className={`highlight-anim px-1 rounded ${
-              isActive
-                ? "bg-secondary text-secondary-content ring-2 ring-secondary ring-offset-2"
-                : "bg-secondary text-secondary-content"
+            className={`highlight-anim px-1 bg-secondary text-secondary-content rounded ${
+              isActive && " ring-2 ring-secondary ring-offset-2"
             }`}
           >
             {part}
@@ -121,6 +120,18 @@ export default function Home() {
     }
   };
 
+  const goNextMatch = () => {
+    if (matches.length > 0) {
+      setActiveMatchIndex((prev) => (prev < matches.length - 1 ? prev + 1 : 0));
+    }
+  };
+
+  const goPrevMatch = () => {
+    if (matches.length > 0) {
+      setActiveMatchIndex((prev) => (prev > 0 ? prev - 1 : matches.length - 1));
+    }
+  };
+
   return (
     <div className="relative">
       <div className="container py-10 max-w-4xl">
@@ -156,18 +167,39 @@ export default function Home() {
           )}
         </div>
 
+        {/* result info + arrows */}
         {debouncedSearch.length > 0 && (
-          <>
+          <div className="flex items-center gap-2 mt-2">
             {debouncedSearch.length < 3 ? (
               <Message classname="text-info">
                 Type at least 3 characters to start searching
               </Message>
             ) : matchCount > 0 ? (
-              <Message classname="text-success">Results : {matchCount}</Message>
+              <div className="flex items-center gap-2">
+                <Message classname="text-success">
+                  Results: {matchCount}
+                </Message>
+                <Button
+                  onClick={goPrevMatch}
+                  size="sm"
+                  className="rounded-sm"
+                  theme="accent"
+                >
+                  ↑
+                </Button>
+                <Button
+                  onClick={goNextMatch}
+                  size="sm"
+                  className="rounded-sm"
+                  theme="accent"
+                >
+                  ↓
+                </Button>
+              </div>
             ) : (
               <Message classname="text-error">No results found</Message>
             )}
-          </>
+          </div>
         )}
 
         <div className="border border-primary p-4 rounded-lg mt-6 leading-relaxed">
