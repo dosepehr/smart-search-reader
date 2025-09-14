@@ -122,7 +122,7 @@ export default function Home() {
   };
 
   return (
-    <div className="font-mono relative">
+    <div className="relative">
       <div className="container py-10 max-w-4xl">
         <div className="relative">
           <Input
