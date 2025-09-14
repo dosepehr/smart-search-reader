@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Input from "@/components/Input";
 import Magnifer from "%/magnifer.svg";
 import { useDebounce } from "@/utils/hooks/useDebounce";
+import { text } from "@/utils/constants";
 
 export default function Home() {
   const router = useRouter();
@@ -26,6 +27,26 @@ export default function Home() {
     router.replace(`?${params.toString()}`);
   }, [debouncedSearch, router]);
 
+  const highlightText = (content: string, query: string) => {
+    if (!query) return content;
+
+    const regex = new RegExp(`(${query})`, "gi");
+    const parts = content.split(regex);
+
+    return parts.map((part, i) =>
+      regex.test(part) ? (
+        <mark
+          key={i}
+          className="bg-secondary text-secondary-content px-1 rounded"
+        >
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  };
+
   return (
     <div className="font-mono">
       <div className="container py-10 max-w-4xl">
@@ -38,8 +59,8 @@ export default function Home() {
             setSearch(e.target.value)
           }
         />
-        <div className="border border-primary p-4 rounded-lg mt-10">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Earum maxime
+        <div className="border border-primary p-4 rounded-lg mt-10 leading-relaxed">
+          {highlightText(text, debouncedSearch)}
         </div>
       </div>
     </div>
