@@ -1,12 +1,7 @@
-import React from "react";
+import React, { FC } from "react";
+import { MessageProps } from "./message.type";
 
-const Message = ({
-  children,
-  classname,
-}: {
-  children: React.ReactNode;
-  classname?: string;
-}) => {
+const Message: FC<MessageProps> = ({ children, classname }) => {
   return (
     <div className="mt-2 text-sm">
       <p className={classname}>{children}</p>
