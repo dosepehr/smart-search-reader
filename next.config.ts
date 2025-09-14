@@ -1,4 +1,8 @@
 import { NextConfig } from "next";
+import withPWA from 'next-pwa';
+
+
+const isDev = process.env.NODE_ENV === 'development';
 
 const nextConfig = {
   webpack(config) {
@@ -34,4 +38,9 @@ const nextConfig = {
   output: "standalone",
 } satisfies NextConfig;
 
-export default nextConfig;
+export default withPWA({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: isDev,
+})(nextConfig);
