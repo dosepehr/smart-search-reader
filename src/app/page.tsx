@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import Input from "@/components/Input";
@@ -19,7 +19,7 @@ export default function Home() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    if (debouncedSearch) {
+    if (debouncedSearch.length >= 3) {
       params.set("q", debouncedSearch);
     } else {
       params.delete("q");
@@ -28,12 +28,10 @@ export default function Home() {
     router.replace(`?${params.toString()}`);
   }, [debouncedSearch, router]);
 
-
-
   const highlightText = (content: string, query: string) => {
-    if (!query) return content;
+    if (!query || query.length < 3) return content;
 
-    const safeQuery = escapeRegex(query); // escape special chars
+    const safeQuery = escapeRegex(query);
     const regex = new RegExp(`(${safeQuery})`, "gi");
     const parts = content.split(regex);
 
@@ -51,6 +49,15 @@ export default function Home() {
     );
   };
 
+  // calculate match count
+  const matchCount = useMemo(() => {
+    if (!debouncedSearch || debouncedSearch.length < 3) return 0;
+
+    const safeQuery = escapeRegex(debouncedSearch);
+    const regex = new RegExp(safeQuery, "gi");
+    return (text.match(regex) || []).length;
+  }, [debouncedSearch]);
+
   return (
     <div className="font-mono">
       <div className="container py-10 max-w-4xl">
@@ -63,7 +70,20 @@ export default function Home() {
             setSearch(e.target.value)
           }
         />
-        <div className="border border-primary p-4 rounded-lg mt-10 leading-relaxed">
+
+        {debouncedSearch.length >= 3 && (
+          <div className="mt-2 text-sm">
+            {matchCount > 0 ? (
+              <p className="text-success">
+                Found {matchCount} result{matchCount > 1 ? "s" : ""}
+              </p>
+            ) : (
+              <p className="text-error">No results found</p>
+            )}
+          </div>
+        )}
+
+        <div className="border border-primary p-4 rounded-lg mt-6 leading-relaxed">
           {highlightText(text, debouncedSearch)}
         </div>
       </div>
