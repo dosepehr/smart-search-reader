@@ -6,6 +6,7 @@ import Input from "@/components/Input";
 import Magnifer from "%/magnifer.svg";
 import { useDebounce } from "@/utils/hooks/useDebounce";
 import { text } from "@/utils/constants";
+import { escapeRegex } from "@/utils/funcs/regex";
 
 export default function Home() {
   const router = useRouter();
@@ -27,8 +28,7 @@ export default function Home() {
     router.replace(`?${params.toString()}`);
   }, [debouncedSearch, router]);
 
-  const escapeRegex = (str: string) =>
-    str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 
   const highlightText = (content: string, query: string) => {
     if (!query) return content;
