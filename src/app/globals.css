@@ -22,7 +22,7 @@
 @plugin "daisyui/theme" {
   color-scheme: "light";
   default: true;
-  
+
   --color-primary: #2563EB;
   --color-primary-content: #ffffff;
 
@@ -85,4 +85,20 @@ img {
 ::selection {
   color: var(--color-neutral-content);
   background: var(--color-neutral)
+}
+
+@keyframes highlightExpand {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.highlight-anim {
+  display: inline-block;
+  transform-origin: right center;
+  animation: highlightExpand 0.4s ease-out forwards;
 }

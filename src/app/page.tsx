@@ -40,7 +40,7 @@ export default function Home() {
       regex.test(part) ? (
         <mark
           key={i}
-          className="bg-secondary text-secondary-content px-1 rounded"
+          className="highlight-anim bg-secondary text-secondary-content px-1 rounded"
         >
           {part}
         </mark>
